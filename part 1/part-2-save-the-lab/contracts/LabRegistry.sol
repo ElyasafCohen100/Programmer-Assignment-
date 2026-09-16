@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract LabRegistry {
+   
     struct Experiment {
         uint256 id;
         string title;
@@ -31,15 +32,24 @@ contract LabRegistry {
         experiments.push(Experiment(2, "On-chain consent prototype", msg.sender, true));
     }
 
-    function getAllExperiments() public returns (Experiment[] memory) {
+    // =============== 1 bug - fixed =============== //
+    function getAllExperiments() public view returns (Experiment[] memory) {
         return experiments;
     }
 
-    function getResultCount() external returns (uint256) {
+    function getResultCount() external view returns (uint256) {
         return results.length;
     }
 
+    // =============== bug 5 - fixed =============== //
     function submitResult(uint256 experimentId, string memory metadataUri) external {
+
+        // ===================== check if exist ===================== //
+        require(experimentId > 0 && experimentId <= experiments.length, 
+                "experimentId does not exist");
+
+        require(experiments[experimentId - 1].active, "Experiment is not active");
+
         results.push(
             Result({
                 researcher: msg.sender,

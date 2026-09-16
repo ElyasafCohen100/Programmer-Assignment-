@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { loadResults, saveResult, type BackendResult } from "./api";
 import { hashResultPayload } from "./crypto";
+
 import {
   getLabContract,
   loadExperiments,
@@ -10,29 +11,35 @@ import {
 
 const DEMO_WALLET = "0x1111111111111111111111111111111111111111";
 
+
 export function LabDashboard() {
+
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [results, setResults] = useState<BackendResult[]>([]);
   const [selectedExperimentId, setSelectedExperimentId] = useState<bigint>(1n);
   const [note, setNote] = useState("");
   const [status, setStatus] = useState("idle");
 
+  
+// ========================== the second bug - fixed ========================== //
   useEffect(() => {
     async function load() {
+
       setStatus("loading");
 
       const contract = await getLabContract();
       const chainExperiments = await loadExperiments(contract);
       const backendResults = await loadResults(DEMO_WALLET);
 
-      setExperiments([...experiments, ...chainExperiments]);
+      setExperiments(chainExperiments);
       setResults(backendResults);
       setStatus("ready");
     }
 
     load();
-  }, [experiments]);
+  }, []);
 
+  
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -40,19 +47,21 @@ export function LabDashboard() {
 
     const contract = await getLabContract();
 
+    // =========== wait for the block chain =========== //
     await submitResultOnChain(
       contract,
       selectedExperimentId,
       `ipfs://lab-result/${selectedExperimentId}`,
     );
 
+    // =========== wait for the hash  =========== //
     const payloadHash = await hashResultPayload({
       wallet: DEMO_WALLET,
       experimentId: Number(selectedExperimentId),
       note,
     });
 
-    saveResult({
+    await saveResult({
       wallet: DEMO_WALLET,
       experimentId: Number(selectedExperimentId),
       txHash: "pending",

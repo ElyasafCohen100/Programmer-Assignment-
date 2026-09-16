@@ -1,5 +1,6 @@
-import { BrowserProvider, Contract } from "ethers";
 import { decodeLabRegistryAbi } from "./encodedAbi";
+import { BrowserProvider, Contract ,type Eip1193Provider, } from "ethers";
+
 
 export type Experiment = {
   id: bigint;
@@ -9,11 +10,10 @@ export type Experiment = {
 };
 
 export const LAB_REGISTRY_ADDRESS = "0x0000000000000000000000000000000000000000";
-
 export const LAB_REGISTRY_ABI = decodeLabRegistryAbi();
 
 type EthereumWindow = Window & {
-  ethereum?: unknown;
+  ethereum?: Eip1193Provider;
 };
 
 export async function getLabContract(): Promise<Contract> {
@@ -29,11 +29,10 @@ export async function getLabContract(): Promise<Contract> {
   return new Contract(LAB_REGISTRY_ADDRESS, LAB_REGISTRY_ABI, signer);
 }
 
+// =============== the fisrt bug - fixed =============== //
 export async function loadExperiments(contract: Contract): Promise<Experiment[]> {
-  const tx = await contract.getAllExperiments();
-  await tx.wait();
-
-  return tx as Experiment[];
+  const experiments  = await contract.getAllExperiments();
+  return experiments  as Experiment[];
 }
 
 export async function submitResultOnChain(
