@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Avatar, Box } from "@mui/material";
 import type { RootState } from "../store/store";
@@ -10,10 +11,21 @@ export default function MessageList() {
         state.chat.conversations.find((conv) => conv.id === state.chat.selectedConversationId));
 
 
+    // ========== for the scroll bar effect ========== //
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({
+            behavior: "smooth"
+        });
+    }, [selectedConversation?.messages.length]);
+
+
+    // ========================================================================================================== //
+
     if (!selectedConversation) {
         return null;
     }
-
 
     if (selectedConversation.messages.length === 0) {
         return (
@@ -29,6 +41,7 @@ export default function MessageList() {
             </Box>
         );
     }
+
 
     return (
         <div>
@@ -58,10 +71,28 @@ export default function MessageList() {
                         maxWidth: "65%",
                     }}>
                         {message.text}
+
+                        {message.sender === "me" && (
+                            <Box
+                                sx={{
+                                    fontSize: "11px",
+                                    marginTop: "3px",
+                                    textAlign: "right",
+                                    color:
+                                        message.status === "sent" ? "#2196f3"
+                                            : message.status === "failed" ? "#d32f2f" : "#777",
+                                }}
+                            >
+                                {message.status === "sending" && "Sending..."}
+                                {message.status === "sent" && "Sent ✓"}
+                                {message.status === "failed" && "Failed ❌"}
+                            </Box>
+                        )}
                     </Box>
                 </Box>
             ))}
 
+            <div ref={messagesEndRef} />
         </div>
     );
 }

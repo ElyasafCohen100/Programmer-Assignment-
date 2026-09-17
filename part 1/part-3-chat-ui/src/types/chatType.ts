@@ -3,7 +3,7 @@ export type Message = {
     id: number;
     text: string;
     sender: "me" | "them";
-    status: "sending" | "sent" | "failed";
+    status: "sending" | "sent" | "failed"; 
 };
 
 

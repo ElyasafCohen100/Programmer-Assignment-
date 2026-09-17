@@ -1,9 +1,24 @@
 import { useState } from "react";
+import type { RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, TextField, Button } from "@mui/material";
+import { sendMessageAction, changeMessageStatusAction } from "../store/chatSlice";
+
 
 export default function MessageComposer() {
 
+    const dispatch = useDispatch();
     const [typingText, setTypingText] = useState("");
+
+    // ==== for all the effect & calc of any chosen conversation ==== //
+    const selectedConversationId = useSelector((state: RootState) =>
+        state.chat.selectedConversationId);
+
+
+    // ==== for the online status ("send" or "failed") ==== // 
+    const selectedConversation = useSelector((state: RootState) =>
+        state.chat.conversations.find((conv) => conv.id === selectedConversationId)
+    );
 
 
     return (
@@ -43,6 +58,30 @@ export default function MessageComposer() {
                     sx={{
                         minWidth: "70px",
                         borderRadius: "18px",
+                    }}
+                    onClick={() => {
+                        if (selectedConversationId && typingText.trim() !== "") {
+
+                            const messageId = Date.now();
+
+                            dispatch(sendMessageAction({
+                                conversationId: selectedConversationId,
+                                messageId: messageId,
+                                message: typingText
+                            }));
+                            setTypingText("");
+
+
+                            setTimeout(() => {
+
+                                dispatch(changeMessageStatusAction({
+                                    conversationId: selectedConversationId,
+                                    messageId: messageId,
+                                    status: selectedConversation?.online ? "sent" : "failed"
+                                }));
+
+                            }, 1500);
+                        }
                     }}
                 >
                     SEND

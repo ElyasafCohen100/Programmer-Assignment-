@@ -18,7 +18,7 @@ export default function App() {
       }}
     >
 
-      {/* ===== Main Header ===== */}
+      {/* ============= Main Header ============= */}
       <Box
         sx={{
           padding: "16px",
@@ -32,10 +32,14 @@ export default function App() {
       </Box>
 
 
-      {/* ===== Main Content ===== */}
-      <Box sx={{ display: "flex", height: "calc(100% - 70px)" }}>
+      {/* ============= Main Content ============= */}
+      <Box sx={{
+        display: "flex",
+        height: "calc(100% - 70px)"
+      }}>
 
-        {/* ===== Left Side ===== */}
+
+        {/* ========= Left Side ========= */}
         <Box
           sx={{
             width: "30%",
@@ -48,7 +52,7 @@ export default function App() {
         </Box>
 
 
-        {/* ===== Right Side ===== */}
+        {/* ========= Right Side ========= */}
         <Box
           sx={{
             flex: 1,
@@ -59,17 +63,15 @@ export default function App() {
         >
           <ChatHeader />
 
-          <Box sx={{ flex: 1, padding: "10px" }}>
+          <Box sx={{ flex: 1, padding: "10px", overflowY: "auto", minHeight: 0, }}>
             <MessageList />
           </Box>
-
 
           <Box sx={{ marginBottom: "15px" }}>
             <MessageComposer />
           </Box>
 
         </Box>
-
       </Box>
     </Box>
   );

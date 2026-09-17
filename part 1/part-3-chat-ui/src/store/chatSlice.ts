@@ -74,20 +74,39 @@ const chatSlice = createSlice({
     // =========== Action II =========== //
     sendMessageAction: (state, action) => {
 
-      const { conversationId, message } = action.payload;
-      const conversation = state.conversations.find((conv) => conv.id === conversationId);
+      const { conversationId, messageId, message } = action.payload;
+
+      const conversation = state.conversations.find(
+        (conv) => conv.id === conversationId
+      );
 
       if (conversation) {
         conversation.messages.push({
-          id: conversation.messages.length + 1,
+          id: messageId,
           text: message,
           sender: "me",
           status: "sending"
         });
       }
+    },
+
+
+    // =========== Action III =========== //
+    changeMessageStatusAction: (state, action) => {
+
+      const { conversationId, messageId, status } = action.payload;
+
+      const conversation = state.conversations.find((conv) => conv.id === conversationId);
+      if (conversation) {
+
+        const message = conversation.messages.find((msg) => msg.id === messageId);
+        if (message) {
+          message.status = status;
+        }
+      }
     }
   },
 });
 
-export const { selectConversationAction, sendMessageAction } = chatSlice.actions;
+export const { selectConversationAction, sendMessageAction, changeMessageStatusAction } = chatSlice.actions;
 export default chatSlice.reducer;

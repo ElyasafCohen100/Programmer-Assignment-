@@ -6,10 +6,10 @@ import { selectConversationAction } from "../store/chatSlice";
 
 export default function ConversationList() {
 
+    const dispatch = useDispatch();
+
     const conversations = useSelector((state: RootState) => state.chat.conversations);
     const selectedConversationId = useSelector((state: RootState) => state.chat.selectedConversationId);
-
-    const dispatch = useDispatch();
 
     return (
         <div>
