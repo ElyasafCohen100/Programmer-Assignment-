@@ -1,10 +1,15 @@
+import { useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import ChatHeader from "./components/ChatHeader";
 import MessageList from "./components/MessageList";
 import MessageComposer from "./components/MessageComposer";
 import ConversationList from "./components/ConversationList";
 
+
 export default function App() {
+
+  // ======= for the scroll bar in "MessageList" component ======= //
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Box
@@ -63,8 +68,15 @@ export default function App() {
         >
           <ChatHeader />
 
-          <Box sx={{ flex: 1, padding: "10px", overflowY: "auto", minHeight: 0, }}>
-            <MessageList />
+          <Box
+            ref={messagesContainerRef}
+            sx={{
+              flex: 1,
+              padding: "10px",
+              overflowY: "auto",
+              minHeight: 0,
+            }}>
+            <MessageList messagesContainerRef={messagesContainerRef} />
           </Box>
 
           <Box sx={{ marginBottom: "15px" }}>

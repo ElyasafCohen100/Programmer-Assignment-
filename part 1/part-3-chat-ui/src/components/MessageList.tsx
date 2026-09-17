@@ -1,10 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Avatar, Box } from "@mui/material";
 import type { RootState } from "../store/store";
 
 
-export default function MessageList() {
+ // ======= props for the scroll bar effect ======= //
+type MessageListProps = {
+    messagesContainerRef: React.RefObject<HTMLDivElement | null>;
+};
+
+export default function MessageList({ messagesContainerRef }: MessageListProps) {
 
     // ======== select a conversation from the store ======== //
     const selectedConversation = useSelector((state: RootState) =>
@@ -12,13 +17,16 @@ export default function MessageList() {
 
 
     // ========== for the scroll bar effect ========== //
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({
-            behavior: "smooth"
-        });
-    }, [selectedConversation?.messages.length]);
+        const container = messagesContainerRef.current;
+
+        if (container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: "smooth"
+            });
+        }
+    }, [selectedConversation?.messages.length, messagesContainerRef]);
 
 
     // ========================================================================================================== //
@@ -91,8 +99,6 @@ export default function MessageList() {
                     </Box>
                 </Box>
             ))}
-
-            <div ref={messagesEndRef} />
         </div>
     );
 }
